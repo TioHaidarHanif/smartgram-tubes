@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class ForumPost extends Model
 {
     use HasFactory;
 
@@ -14,17 +14,14 @@ class Post extends Model
         'category_id',
         'title',
         'content',
-        'type',
-        'media_urls',
-        'is_published',
-        'is_featured',
+        'is_sticky',
+        'is_closed',
         'views_count',
     ];
 
     protected $casts = [
-        'media_urls' => 'array',
-        'is_published' => 'boolean',
-        'is_featured' => 'boolean',
+        'is_sticky' => 'boolean',
+        'is_closed' => 'boolean',
     ];
 
     // Relationships
@@ -40,12 +37,7 @@ class Post extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
-    }
-
-    public function likes()
-    {
-        return $this->morphMany(Like::class, 'likeable');
+        return $this->hasMany(Comment::class, 'post_id');
     }
 
     // Helper methods
@@ -54,13 +46,13 @@ class Post extends Model
         $this->increment('views_count');
     }
 
-    public function likesCount()
-    {
-        return $this->likes()->count();
-    }
-
-    public function commentsCount()
+    public function repliesCount()
     {
         return $this->comments()->count();
+    }
+
+    public function lastReply()
+    {
+        return $this->comments()->latest()->first();
     }
 }
