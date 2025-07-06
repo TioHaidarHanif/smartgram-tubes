@@ -5,14 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Like extends Model
+class UserTutorialProgress extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'likeable_type',
-        'likeable_id',
+        'tutorial_step_id',
+        'completed',
+        'skipped',
+    ];
+
+    protected $casts = [
+        'completed' => 'boolean',
+        'skipped' => 'boolean',
     ];
 
     // Relationships
@@ -21,8 +27,8 @@ class Like extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function likeable()
+    public function tutorialStep()
     {
-        return $this->morphTo();
+        return $this->belongsTo(TutorialStep::class);
     }
 }
